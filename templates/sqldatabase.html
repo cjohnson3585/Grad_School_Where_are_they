@@ -1,0 +1,273 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+ 		<link rel="stylesheet" href="{{ url_for('static', filename='style13.css') }}"> 
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+        <meta charset="utf-8">
+        	<title>{% block title %}{% endblock %}</title>
+        	<style>
+        	
+#myTable1 {
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  font-size: 18px;
+  margin-left: 100px; 
+  margin-right: 100px; 
+  width: 90%;
+}
+
+#myTable1 th  {
+  text-align: left;
+  padding: 12px;
+  background-color: white;
+  width: 100px;
+}
+
+
+#myTable1 tr {
+  border-bottom: 1px solid #ddd;
+}
+
+#myTable1 tr.header, #myTable tr:hover {
+  background-color: #f1f1f1;
+}
+        	</style>
+    </head>
+   
+	<body>
+	
+	<h2 align="center">Grad School: Where are they now? </h2>
+	<div align="right" style='margin-right: 50px;'><i class="fas fa-user-circle"></i> Logged in as: {{uname}}</div>
+
+		<nav class="navtop">
+			<div align="center">      		
+                <a href="{{ url_for('home', uname=username) }}"><i class="fas fa-home"></i>Home</a>
+                <a href="{{ url_for('forum', uname=uname) }}"><i class="fas fa-align-justify"></i>Forum</a>
+				<a href="{{ url_for('profile', uname=uname, aresults=aresults, msg=msg) }}"><i class="fas fa-user-alt"></i>Profile</a>
+				<a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+			</div>
+		</nav>
+        
+        <div class="totalusers" id="data"></div>
+        <br>
+   
+   <input type="text" id="myInput" onkeyup="tableSearch()" placeholder="Search by Last Names.." title="Type in a Last Name">
+   <table class="table table-hover table-bordered table-sm" id="myTable1" cellspacing="0">
+             <thead>
+            <tr>
+            <th style="width:100px" onclick="sortTable(0)">First Name</th>
+            <th onclick="sortTable(1)">Last Name</th>
+            <th onclick="sortTable(2)">School</th>
+            <th onclick="sortTable(3)">Degree</th>
+            <th onclick="sortTable(4)">Field</th>
+            <th onclick="sortTable(5)">Year</th>
+            <th onclick="sortTable(6)">Current Employer</th>
+            <th onclick="sortTable(7)">Job Title</th>
+            <th onclick="sortTable(8)">User Name</th>
+            <th onclick="sortTable(9)">Contact</th>
+            <th onclick="sortTable(10)">Current Location</th>
+            </tr>
+         </thead>
+    </table>
+     <div id="table-wrapper">
+       <div id="table-scroll">
+          <table class="table table-hover table-bordered table-sm" id="myTable" style='margin-left: 100px; margin-right: 100px; width: 90%;' cellspacing="0">
+
+         {% for result in results %}
+            <tr>
+               <td style="width:100px">{{result["first_name"]}}</td>
+               <td style="width:100px">{{result["last_name"]}}</td>
+               <td style="width:100px">{{result["school"]}}</td>
+               <td style="width:100px">{{result["degree"]}}</td>
+               <td style="width:100px">{{result["field"]}}</td>
+               <td style="width:100px">{{result["year"]}}</td>
+               <td style="width:100px">{{result["current_employer"]}}</td>
+               <td style="width:100px">{{result["job_title"]}}</td>
+               <td style="width:100px">{{result["user_name"]}}</td>
+               <td style="width:100px">{{result["contact"]}}</td>
+               <td style="width:100px">{{result["location"]}}</td>
+            </tr>
+         {% endfor %}
+      </table>
+        </div>
+       </div>
+   
+       <div class ='row'>
+
+        {% block content %}
+        {% if 'dropdown' in request.url %}
+        {% if 'query_edit' in request.url %}
+        <div style='margin-left: 100px; width: 45%;'>
+
+        {% for eresult in eresults %}
+
+        <form action = "edit" method = "POST">
+         <p>First Name: <input class="form-control" type = "text" name = "first_name" style='width: 100%;' value='{{eresult["first_name"]}}'/></p>
+         <p>Last Name: <input class="form-control" type = "text" name = "last_name" style='width: 100%;' value='{{eresult["last_name"]}}' /></p>
+         <p>School: <input class="form-control" type = "text" name = "school" style='width: 100%;' value='{{eresult["school"]}}' /></p>
+         <p>Degree: <input class="form-control" type = "text" name = "degree" style='width: 100%;' value='{{eresult["degree"]}}' /></p>
+         <p>Field: <input class="form-control" type ="text" name = "field" style='width: 100%;' value='{{eresult["field"]}}' /></p>
+         <p>Year: <input class="form-control" type ="text" name = "year" style='width: 100%;' value='{{eresult["year"]}}' /></p>
+         <p>Current Employer: <input class="form-control" type ="text" name = "current_employer" style='width: 100%;' value='{{eresult["current_employer"]}}' /></p>
+         <p>Job Title: <input class="form-control" type ="text" name = "job_title" style='width: 100%;' value='{{eresult["job_title"]}}' /></p>
+         <p>User Name: <input class="form-control" type ="text" name = "user_name" style='width: 100%;' value='{{eresult["user_name"]}}' /></p>
+         <p>Contact: <input class="form-control" type ="text" name = "contact" style='width: 100%;' value='{{eresult["contact"]}}' /></p>
+         <p>Location: <input class="form-control" type ="text" name = "location" style='width: 100%;' value='{{eresult["location"]}}' /></p>
+         <input type ="hidden" name = "old_first_name" value='{{eresult["first_name"]}}' />
+         <input type ="hidden" name = "old_last_name" value='{{eresult["last_name"]}}' />
+
+         {% endfor %}
+
+         <br>
+
+         <p><input class="btn-primary" type = "submit" value = "Update Data" /></p>
+        </form>
+        </div>
+
+        {% else %}
+        <div style='margin-left: 100px; width: 45%; margin-top: 50px;'>
+
+        
+        <form action = "insert" method = "POST">
+         <p>First Name: <input class="form-control" type = "text" name = "first_name" style='width: 100%;' /></p>
+         <p>Last Name: <input class="form-control" type = "text" name = "last_name" style='width: 100%;' /></p>
+         <p>School: <input class="form-control" type = "text" name = "school" style='width: 100%;' /></p>
+         <p>Degree: <input class="form-control" type = "text" name = "degree" style='width: 100%;' /></p>
+         <p>Field: <input class="form-control" type ="text" name = "field" style='width: 100%;' /></p>
+         <p>Year: <input class="form-control" type ="text" name = "year" style='width: 100%;' /></p>
+         <p>Current Employer: <input class="form-control" type ="text" name = "current_employer" style='width: 100%;' /></p>
+         <p>Job Title: <input class="form-control" type ="text" name = "job_title" style='width: 100%;' /></p>
+         <p>User Name: <input class="form-control" type ="text" name = "user_name" style='width: 100%;' /></p>
+         <p>Contact: <input class="form-control" type ="text" name = "contact" style='width: 100%;' /></p>
+         <p>Location: <input class="form-control" type ="text" name = "location" style='width: 100%;' /></p>
+
+         <br>
+
+         <p><input class="btn-primary" type = "submit" value = "Insert Data" /></p>
+        </form>
+        <form action = "hidedata">
+         <p><input class="btn-primary" type = "submit" value = "Hide Data Form" /></p>
+        </form>
+        </div>
+
+
+        {% endif %}
+        {% else %}
+        <div style='margin-left: 115px; width: 45%; margin-top: 50px;'>
+    <!--    <form action = "dropdown"> -->
+    <!--    <p><input class="btn-primary" type = "submit" value = "Show Data Form" /></p> -->
+    <!--    </form> -->
+        </div>
+        {% endif %}
+        
+        {% endblock content %}
+
+      <br><br>
+
+    <script>
+    <!-- SORT TABLE BY CLICKING ON HEADER NAME-->
+    function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("myTable");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc"; 
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 0; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("td")[n];
+      y = rows[i + 1].getElementsByTagName("td")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++; 
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+    
+    
+    <!-- GET TOTAL NUMBER OF USERS-->
+    var cntr = document.getElementById("myTable").rows.length;
+    document.getElementById("data").innerHTML='Total Number of Users: '+cntr;
+    console.log(uname);
+
+    <!--GET TOTAL NUMBER OF USERS (OLD, NOT USED)-->
+    function CountRows() {
+        var totalRowCount = 0;
+        var rowCount = 0;
+        var table = document.getElementById("myTable");
+        var rows = table.getElementsByTagName("tr")
+        for (var i = 0; i < rows.length; i++) {
+            totalRowCount++;
+            if (rows[i].getElementsByTagName("td").length > 0) {
+                rowCount++;
+            }
+        }
+        var message = "Total Row Count: " + totalRowCount;
+        message += "\nRow Count: " + rowCount;
+        return rowCount;
+    }
+    
+    <!-- FUNCTION FOR SEARCHING A TABLE-->
+    function tableSearch() {
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }       
+      }
+    }
+    </script>
+
+
+    </body>
+</html>
